@@ -17,19 +17,4 @@ public class Tile extends Rectangle {
         setStroke(Color.DARKGREY);
     }
 
-    public boolean shoot(){
-        wasShot = true;
-        if(ship != null){
-            ship.hit();
-            this.setFill(Color.ORANGERED);
-            this.setStroke(Color.DARKGRAY);
-            if(!ship.isOperational()){
-                board.shipsCount--;
-            }
-            return true;
-        }
-        this.setFill(Color.MEDIUMAQUAMARINE);
-        this.setStroke(Color.DARKGRAY);
-        return false;
-    }
 }
