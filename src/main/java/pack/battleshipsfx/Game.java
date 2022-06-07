@@ -112,6 +112,7 @@ public class Game {
             tile.setFill(Color.ORANGERED);
             tile.setStroke(Color.DARKGRAY);
             if(!tile.ship.isOperational()){
+                toggleNeighboursTile(board,tile);
                 board.shipsCount--;
             }
             return true;
@@ -119,5 +120,21 @@ public class Game {
         tile.setFill(Color.MEDIUMAQUAMARINE);
         tile.setStroke(Color.DARKGRAY);
         return false;
+    }
+
+    private void toggleNeighboursTile(Board board,Tile tile){
+        Tile[] neighbours = board.getNeighbours(tile.x,tile.y);
+        tile.setFill(Color.RED);
+        for (Tile tiles : neighbours){
+            if(tiles.getFill() == Color.AQUA){
+                tiles.setFill(Color.MEDIUMAQUAMARINE);
+                tiles.setStroke(Color.DARKGRAY);
+                tiles.wasShot = true;
+            }
+            if(tiles.getFill() == Color.ORANGERED){
+                tiles.setFill(Color.RED);
+                toggleNeighboursTile(board,tiles);
+            }
+        }
     }
 }
