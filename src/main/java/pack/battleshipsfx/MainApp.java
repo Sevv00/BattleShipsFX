@@ -1,18 +1,13 @@
 package pack.battleshipsfx;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.util.Random;
 
 public class MainApp extends Application {
     private Game game;
@@ -21,7 +16,7 @@ public class MainApp extends Application {
         root.setPrefSize(600,800);
         root.setRight(new Text("ALPHA 1.0 "));
         game = new Game();
-        VBox vbox = new VBox(50,game.enemyBoard,game.playerBoard);
+        VBox vbox = new VBox(50,game.playerTwoBoard,game.playerOneBoard);
         vbox.setAlignment(Pos.CENTER);
 
         root.setCenter(vbox);

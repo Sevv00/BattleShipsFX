@@ -1,14 +1,7 @@
 package pack.battleshipsfx;
 
 public class ShipPlacementValidation {
-
-    private Board board;
-
-    public ShipPlacementValidation(Board board){
-        this.board = board;
-    }
-
-    private boolean validateShipPlacement(Ship ship,int x, int y){
+    public static boolean validateShipPlacement(Board board, Ship ship, int x, int y){
         int length = ship.getShipType();
         if(ship.isInVerticalPosition()){
             for (int i = y; i < y + length; i++){

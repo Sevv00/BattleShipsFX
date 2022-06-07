@@ -7,24 +7,28 @@ import java.util.Random;
 
 public class Game {
     public boolean running = false;
-    public Board enemyBoard,playerBoard;
-    private boolean enemyTurn = false;;
+    public Board playerOneBoard,playerTwoBoard;
+    private boolean enemyTurn = false;
     private  int shipToPlace = 5;
     private final Random random = new Random();
+    private final BotPlayer bot;
 
     public Game(){
-        enemyBoard = new Board(true,event -> {
+        playerTwoBoard = new Board(true,event -> {
             if(!running){
                 return;
             }
 
             Tile tile = (Tile) event.getSource();
+            System.out.println(tile.x +" "+ tile.y);
             if(tile.wasShot){
                 return;
             }
 
-            enemyTurn = !shoot(enemyBoard,tile);
-            if(enemyBoard.shipsCount == 0){
+            enemyTurn = !shoot(playerTwoBoard,tile);
+
+            //TO DO WIN SCREEN
+            if(playerTwoBoard.shipsCount == 0){
                 System.out.println("YOU WON");
                 System.exit(0);
             }
@@ -33,28 +37,29 @@ public class Game {
                 enemyMove();
             }
         });
-        playerBoard = new Board(false,event -> {
+        playerOneBoard = new Board(false,event -> {
             if(running){
                 return;
             }
             Tile tile = (Tile) event.getSource();
-            if(playerBoard.placeShip(new Ship(shipToPlace,event.getButton() == MouseButton.PRIMARY),tile.x,tile.y)){
+            if(placeShip(playerOneBoard,new Ship(shipToPlace,event.getButton() == MouseButton.PRIMARY),tile.x,tile.y)){
                 if(--shipToPlace == 0){
                     placeEnemyShips();
                 }
             }
         });
+        bot = new BotPlayer(playerOneBoard);
     }
 
-    public boolean placeShip(Ship ship, int x, int y){
-        if(validateShipPlacement(ship,x,y)){
+    public boolean placeShip(Board board,Ship ship, int x, int y){
+        if(ShipPlacementValidation.validateShipPlacement(board,ship,x,y)){
             int length = ship.getShipType();
             boolean vertical = ship.isInVerticalPosition();
             if(vertical){
                 for (int i = y; i < y+length;i++){
-                    Tile tile = getTile(x,i);
+                    Tile tile = board.getTile(x,i);
                     tile.ship = ship;
-                    if(!enemy){
+                    if(!board.isEnemyBoard()){
                         tile.setFill(Color.GRAY);
                         tile.setStroke(Color.DARKGRAY);
                     }
@@ -62,9 +67,9 @@ public class Game {
             }
             else{
                 for (int i = x; i < x+length;i++){
-                    Tile tile = getTile(i,y);
+                    Tile tile = board.getTile(i,y);
                     tile.ship = ship;
-                    if(!enemy){
+                    if(!board.isEnemyBoard()){
                         tile.setFill(Color.GRAY);
                         tile.setStroke(Color.DARKGRAY);
                     }
@@ -76,18 +81,10 @@ public class Game {
     }
 
     private void enemyMove(){
-        while(enemyTurn){
-            int x = random.nextInt(10);
-            int y = random.nextInt(10);
-
-            Tile tile = playerBoard.getTile(x,y);
-            if(tile.wasShot){
-                continue;
-            }
-
-            enemyTurn = Game.shoot(playerBoard,tile);
-
-            if(playerBoard.shipsCount == 0){
+        while (enemyTurn) {
+            Tile tile = bot.nextTargetPosition();
+            enemyTurn = this.shoot(playerOneBoard, tile);
+            if (playerOneBoard.shipsCount == 0) {
                 System.out.println("YOU LOST");
                 System.exit(0);
             }
@@ -101,7 +98,7 @@ public class Game {
             int x = random.nextInt(10);
             int y = random.nextInt(10);
 
-            if(enemyBoard.placeShip(new Ship(type,Math.random() < 0.5),x,y)){
+            if(placeShip(playerTwoBoard,new Ship(type,Math.random() < 0.5),x,y)){
                 type--;
             }
         }
